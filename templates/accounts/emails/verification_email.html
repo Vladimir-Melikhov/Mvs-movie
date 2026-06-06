@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email - Mvs-Movie</title>
+    <style>
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.6;
+            color: #f5f5dc;
+            background: linear-gradient(135deg, #1a0f0f 0%, #2d1810 50%, #1a0f0f 100%);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: linear-gradient(135deg, rgba(61, 40, 23, 0.95) 0%, rgba(26, 15, 15, 0.98) 100%);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(212, 175, 55, 0.3);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+        }
+        .header {
+            background: linear-gradient(135deg, #8b0000 0%, #5a0000 100%);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 3px solid #d4af37;
+            position: relative;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(0, 0, 0, 0.15),
+                    rgba(0, 0, 0, 0.15) 1px,
+                    transparent 1px,
+                    transparent 2px
+                );
+            pointer-events: none;
+            opacity: 0.3;
+        }
+        .header h1 {
+            color: #d4af37;
+            margin: 0;
+            font-size: 32px;
+            font-weight: 900;
+            text-shadow: 
+                2px 2px 0px #8b0000,
+                4px 4px 10px rgba(0, 0, 0, 0.8);
+            letter-spacing: 0.05em;
+            position: relative;
+            z-index: 1;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .content h2 {
+            color: #d4af37;
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        .content p {
+            color: rgba(245, 245, 220, 0.9);
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #8b0000 0%, #5a0000 100%);
+            border: 2px solid #d4af37;
+            color: #d4af37 !important;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 15px rgba(139, 0, 0, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .button:hover {
+            border-color: #f5f5dc;
+            color: #f5f5dc !important;
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+            transform: translateY(-2px);
+        }
+        .info-box {
+            background: rgba(61, 40, 23, 0.6);
+            border-left: 4px solid #d4af37;
+            padding: 16px;
+            margin: 24px 0;
+            border-radius: 4px;
+        }
+        .info-box p {
+            margin: 0;
+            font-size: 14px;
+            color: rgba(245, 245, 220, 0.8);
+        }
+        .footer {
+            background: rgba(26, 15, 15, 0.95);
+            padding: 30px;
+            text-align: center;
+            color: rgba(245, 245, 220, 0.6);
+            font-size: 14px;
+            border-top: 2px solid rgba(212, 175, 55, 0.3);
+        }
+        .footer a {
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #d4af37, transparent);
+            margin: 30px 0;
+            opacity: 0.3;
+        }
+        .alternative-link {
+            background: rgba(26, 15, 15, 0.8);
+            padding: 16px;
+            border-radius: 6px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            word-break: break-all;
+            font-size: 14px;
+            color: rgba(245, 245, 220, 0.8);
+            margin-top: 20px;
+        }
+        strong {
+            color: #d4af37;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Mvs-Movie</h1>
+        </div>
+
+        <div class="content">
+            <h2>Welcome to Mvs-Movie, {{ user.username }}! 🎉</h2>
+
+            <p>Thank you for registering with Mvs-Movie. We're excited to have you join our community of movie enthusiasts!</p>
+
+            <p>To get started and access all features, please verify your email address by clicking the button below:</p>
+
+            <div style="text-align: center;">
+                <a href="{{ verification_url }}" class="button">Verify Email Address</a>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⏰ Important:</strong> This verification link will expire in {{ expiry_hours }} hours. Please verify your email as soon as possible.</p>
+            </div>
+
+            <div class="divider"></div>
+
+            <p style="font-size: 14px;">If the button above doesn't work, copy and paste this link into your browser:</p>
+
+            <div class="alternative-link">
+                {{ verification_url }}
+            </div>
+
+            <div class="divider"></div>
+
+            <p style="font-size: 14px;">
+                <strong>Didn't create an account?</strong><br>
+                If you didn't register for a Mvs-Movie account, please ignore this email or contact our support team if you have concerns.
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>
+                <strong style="color: #d4af37;">Mvs-Movie</strong><br>
+                Your favorite entertainment platform
+            </p>
+            <p style="margin-top: 20px;">
+                <a href="#">Help Center</a> |
+                <a href="#">Contact Support</a> |
+                <a href="#">Privacy Policy</a>
+            </p>
+            <p style="margin-top: 20px; font-size: 12px;">
+                &copy; 2025 Mvs-Movie. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

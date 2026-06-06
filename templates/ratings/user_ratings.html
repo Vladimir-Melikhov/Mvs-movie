@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block title %}My Ratings - Mvs-Movie{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="flex items-center justify-between mb-8">
+        <h1 class="ornate-title text-4xl">My Ratings</h1>
+        <div class="text-amber-200/70 font-serif">
+            <span class="text-2xl font-bold text-amber-400">{{ page_obj.paginator.count }}</span> movie{{ page_obj.paginator.count|pluralize }} rated
+        </div>
+    </div>
+
+    <!-- Filter and Sort -->
+    <div class="vintage-card rounded-lg border border-amber-900/30 p-4 mb-8 shadow-xl">
+        <form method="get" class="flex flex-wrap gap-4">
+            <select name="sort"
+                    onchange="this.form.submit()"
+                    class="vintage-input rounded-lg px-4 py-2 font-serif">
+                <option value="-created_at" {% if request.GET.sort == '-created_at' or not request.GET.sort %}selected{% endif %}>
+                    Newest First
+                </option>
+                <option value="created_at" {% if request.GET.sort == 'created_at' %}selected{% endif %}>
+                    Oldest First
+                </option>
+                <option value="-score" {% if request.GET.sort == '-score' %}selected{% endif %}>
+                    Highest Rated
+                </option>
+                <option value="score" {% if request.GET.sort == 'score' %}selected{% endif %}>
+                    Lowest Rated
+                </option>
+                <option value="movie__title" {% if request.GET.sort == 'movie__title' %}selected{% endif %}>
+                    Title (A-Z)
+                </option>
+            </select>
+
+            <select name="filter"
+                    onchange="this.form.submit()"
+                    class="vintage-input rounded-lg px-4 py-2 font-serif">
+                <option value="" {% if not request.GET.filter %}selected{% endif %}>All Ratings</option>
+                <option value="10" {% if request.GET.filter == '10' %}selected{% endif %}>10 Stars</option>
+                <option value="9-10" {% if request.GET.filter == '9-10' %}selected{% endif %}>9-10 Stars</option>
+                <option value="7-8" {% if request.GET.filter == '7-8' %}selected{% endif %}>7-8 Stars</option>
+                <option value="5-6" {% if request.GET.filter == '5-6' %}selected{% endif %}>5-6 Stars</option>
+                <option value="1-4" {% if request.GET.filter == '1-4' %}selected{% endif %}>1-4 Stars</option>
+            </select>
+        </form>
+    </div>
+
+    <!-- Ratings List -->
+    <div class="space-y-4">
+        {% for rating in ratings %}
+        <div class="vintage-card rounded-lg border border-amber-900/30 hover:border-amber-400/50 transition overflow-hidden shadow-xl">
+            <div class="flex">
+                <!-- Movie Poster -->
+                <div class="w-32 flex-shrink-0">
+                    <a href="{% url 'movies:movie_detail' rating.movie.slug %}">
+                        {% if rating.movie.poster %}
+                        <img src="{{ rating.movie.poster.url }}"
+                              alt="{{ rating.movie.title }}"
+                              class="w-full h-48 object-cover">
+                        {% else %}
+                        <img src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=200"
+                              alt="{{ rating.movie.title }}"
+                              class="w-full h-48 object-cover">
+                        {% endif %}
+                    </a>
+                </div>
+
+                <!-- Movie Info -->
+                <div class="flex-1 p-6">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex-1">
+                            <a href="{% url 'movies:movie_detail' rating.movie.slug %}"
+                                class="text-2xl font-semibold hover:text-amber-400 transition ornate-title">
+                                {{ rating.movie.title }}
+                            </a>
+                            <p class="text-amber-200/60 text-sm mt-1 font-serif">
+                                {{ rating.movie.year }} • {{ rating.movie.category.name }}
+                            </p>
+                        </div>
+                        <div class="text-right">
+                            <div class="flex items-center space-x-1 mb-1">
+                                {% for i in "0123456789" %}
+                                <svg class="w-5 h-5 star {% if forloop.counter <= rating.score %}filled{% endif %}"
+                                      fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                                {% endfor %}
+                            </div>
+                            <p class="text-2xl font-bold text-amber-400">{{ rating.score }}/10</p>
+                            <p class="text-xs text-amber-200/50 mt-1 font-serif">{{ rating.created_at|date:"M d, Y" }}</p>
+                        </div>
+                    </div>
+
+                    {% if rating.movie.description %}
+                    <p class="text-amber-200/70 text-sm line-clamp-2 font-serif">
+                        {{ rating.movie.description|truncatewords:30 }}
+                    </p>
+                    {% endif %}
+
+                    <div class="flex items-center space-x-4 mt-4">
+                        <a href="{% url 'movies:movie_detail' rating.movie.slug %}"
+                            class="text-amber-400 hover:text-amber-300 text-sm font-semibold transition font-serif">
+                            View Movie →
+                        </a>
+                        <a href="{% url 'ratings:add_or_update_rating' rating.movie.slug %}"
+                            class="text-blue-400 hover:text-blue-300 text-sm font-semibold transition font-serif">
+                            Edit Rating
+                        </a>
+                        <form method="post" action="{% url 'ratings:delete_rating' rating.id %}"
+                              onsubmit="return confirm('Are you sure you want to delete this rating?');"
+                              class="inline">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    class="text-red-400 hover:text-red-300 text-sm font-semibold transition font-serif">
+                                Delete Rating
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-12 vintage-card rounded-lg border border-amber-900/30 shadow-xl">
+            <p class="text-amber-200/70 text-xl mb-4 font-serif">You haven't rated any movies yet</p>
+            <a href="{% url 'movies:home' %}"
+                class="vintage-btn inline-block py-3 px-6">
+                Browse Movies
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="flex justify-center mt-12 space-x-2">
+        {% if page_obj.has_previous %}
+        <a href="?page=1{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}"
+            class="px-4 py-2 category-btn rounded-lg transition">
+            First
+        </a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}"
+            class="px-4 py-2 category-btn rounded-lg transition">
+            Previous
+        </a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <span class="px-4 py-2 vintage-btn rounded-lg">{{ num }}</span>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <a href="?page={{ num }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}"
+            class="px-4 py-2 category-btn rounded-lg transition">
+            {{ num }}
+        </a>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}"
+            class="px-4 py-2 category-btn rounded-lg transition">
+            Next
+        </a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}"
+            class="px-4 py-2 category-btn rounded-lg transition">
+            Last
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

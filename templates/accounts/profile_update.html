@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+
+{% block title %}Settings - Mvs-Movie{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="ornate-title text-4xl mb-8">Account Settings</h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+            <div class="vintage-card rounded-lg border border-amber-900/30 p-4 shadow-xl">
+                <nav class="space-y-2">
+                    <a href="#profile"
+                       class="block px-4 py-2 rounded hover:bg-amber-900/30 transition text-amber-400 font-serif">
+                        Profile Information
+                    </a>
+                    <a href="#password"
+                       class="block px-4 py-2 rounded hover:bg-amber-900/30 transition text-amber-200/70 font-serif">
+                        Change Password
+                    </a>
+                    <a href="#avatar"
+                       class="block px-4 py-2 rounded hover:bg-amber-900/30 transition text-amber-200/70 font-serif">
+                        Avatar
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="lg:col-span-2 space-y-8">
+            <!-- Profile Information -->
+            <div id="profile" class="vintage-card rounded-lg shadow-2xl p-8 border border-amber-900/30">
+                <h2 class="ornate-title text-2xl mb-6">Profile Information</h2>
+                <form method="post" action="{% url 'accounts:settings' %}" enctype="multipart/form-data" class="space-y-6">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="profile">
+
+                    <div>
+                        <label for="username" class="block text-sm font-semibold mb-2 text-amber-400">
+                            Username
+                        </label>
+                        <input type="text"
+                               name="username"
+                               id="username"
+                               value="{{ user.username }}"
+                               class="vintage-input rounded-lg px-4 py-3 w-full"
+                               readonly>
+                        <p class="mt-1 text-xs text-amber-200/50 italic">Username cannot be changed</p>
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-sm font-semibold mb-2 text-amber-400">
+                            Email Address
+                        </label>
+                        <input type="email"
+                               name="email"
+                               id="email"
+                               value="{{ user.email }}"
+                               class="vintage-input rounded-lg px-4 py-3 w-full"
+                               readonly>
+                        <p class="mt-1 text-xs text-amber-200/50 italic">Email cannot be changed</p>
+                    </div>
+
+                    <div>
+                        <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-semibold mb-2 text-amber-400">
+                            First Name (Optional)
+                        </label>
+                        <input type="text"
+                               name="{{ form.first_name.name }}"
+                               id="{{ form.first_name.id_for_label }}"
+                               value="{{ form.first_name.value|default:'' }}"
+                               class="vintage-input rounded-lg px-4 py-3 w-full">
+                        {% if form.first_name.errors %}
+                        <p class="mt-1 text-sm text-red-400">{{ form.first_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-semibold mb-2 text-amber-400">
+                            Last Name (Optional)
+                        </label>
+                        <input type="text"
+                               name="{{ form.last_name.name }}"
+                               id="{{ form.last_name.id_for_label }}"
+                               value="{{ form.last_name.value|default:'' }}"
+                               class="vintage-input rounded-lg px-4 py-3 w-full">
+                        {% if form.last_name.errors %}
+                        <p class="mt-1 text-sm text-red-400">{{ form.last_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.bio.id_for_label }}" class="block text-sm font-semibold mb-2 text-amber-400">
+                            Bio (Optional)
+                        </label>
+                        <textarea name="{{ form.bio.name }}"
+                                  id="{{ form.bio.id_for_label }}"
+                                  rows="4"
+                                  class="vintage-input rounded-lg px-4 py-3 w-full">{{ form.bio.value|default:'' }}</textarea>
+                        {% if form.bio.errors %}
+                        <p class="mt-1 text-sm text-red-400">{{ form.bio.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="vintage-btn py-3 px-6">
+                        Save Changes
+                    </button>
+                </form>
+            </div>
+
+            <!-- Change Password -->
+            <div id="password" class="vintage-card rounded-lg shadow-2xl p-8 border border-amber-900/30">
+                <h2 class="ornate-title text-2xl mb-6">Change Password</h2>
+                <form method="post" action="{% url 'accounts:settings' %}" class="space-y-6">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="password">
+
+                    <div>
+                        <label for="{{ password_form.old_password.id_for_label }}" class="block text-sm font-semibold mb-2 text-amber-400">
+                            Current Password
+                        </label>
+                        <input type="password"
+                               name="{{ password_form.old_password.name }}"
+                               id="{{ password_form.old_password.id_for_label }}"
+                               class="vintage-input rounded-lg px-4 py-3 w-full"
+                               required>
+                        {% if password_form.old_password.errors %}
+                        <p class="mt-1 text-sm text-red-400">{{ password_form.old_password.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ password_form.new_password1.id_for_label }}" class="block text-sm font-semibold mb-2 text-amber-400">
+                            New Password
+                        </label>
+                        <input type="password"
+                               name="{{ password_form.new_password1.name }}"
+                               id="{{ password_form.new_password1.id_for_label }}"
+                               class="vintage-input rounded-lg px-4 py-3 w-full"
+                               required>
+                        {% if password_form.new_password1.errors %}
+                        <p class="mt-1 text-sm text-red-400">{{ password_form.new_password1.errors.0 }}</p>
+                        {% endif %}
+                        {% if password_form.new_password1.help_text %}
+                        <p class="mt-1 text-xs text-amber-200/50 italic">{{ password_form.new_password1.help_text }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ password_form.new_password2.id_for_label }}" class="block text-sm font-semibold mb-2 text-amber-400">
+                            Confirm New Password
+                        </label>
+                        <input type="password"
+                               name="{{ password_form.new_password2.name }}"
+                               id="{{ password_form.new_password2.id_for_label }}"
+                               class="vintage-input rounded-lg px-4 py-3 w-full"
+                               required>
+                        {% if password_form.new_password2.errors %}
+                        <p class="mt-1 text-sm text-red-400">{{ password_form.new_password2.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="vintage-btn py-3 px-6">
+                        Change Password
+                    </button>
+                </form>
+            </div>
+
+            <!-- Avatar Upload -->
+            <div id="avatar" class="vintage-card rounded-lg shadow-2xl p-8 border border-amber-900/30">
+                <h2 class="ornate-title text-2xl mb-6">Avatar</h2>
+                <form method="post" action="{% url 'accounts:settings' %}" enctype="multipart/form-data" class="space-y-6">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="profile">
+
+                    <div class="flex items-start space-x-6">
+                        <div class="flex-shrink-0">
+                            {% if user.avatar %}
+                            <img src="{{ user.avatar.url }}"
+                                 alt="{{ user.username }}"
+                                 class="w-32 h-32 rounded-full object-cover border-4 border-amber-400 shadow-xl">
+                            {% else %}
+                            <div class="w-32 h-32 bg-gradient-to-br from-amber-700 to-red-900 rounded-full flex items-center justify-center text-5xl font-bold border-4 border-amber-400 shadow-xl ornate-title">
+                                {{ user.username|first|upper }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="flex-1">
+                            <label for="{{ form.avatar.id_for_label }}" class="block text-sm font-semibold mb-2 text-amber-400">
+                                Upload New Avatar
+                            </label>
+                            <input type="file"
+                                   name="{{ form.avatar.name }}"
+                                   id="{{ form.avatar.id_for_label }}"
+                                   accept="image/*"
+                                   class="w-full vintage-input rounded-lg px-4 py-3 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-amber-900 file:text-amber-200 hover:file:bg-amber-800">
+                            {% if form.avatar.errors %}
+                            <p class="mt-1 text-sm text-red-400">{{ form.avatar.errors.0 }}</p>
+                            {% endif %}
+                            <p class="mt-2 text-xs text-amber-200/50 italic">
+                                Allowed formats: JPG, JPEG, PNG, GIF, WEBP<br>
+                                Maximum file size: 5MB
+                            </p>
+
+                            {% if user.avatar %}
+                            <div class="mt-4">
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" name="avatar-clear" id="avatar-clear" class="w-4 h-4 text-amber-500 bg-amber-950 border-amber-700 rounded focus:ring-amber-500">
+                                    <span class="text-sm text-amber-200/70 font-serif">Remove current avatar</span>
+                                </label>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="vintage-btn py-3 px-6">
+                        Update Avatar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

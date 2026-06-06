@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Email Confirmation - Mvs-Movie{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-12">
+    <div class="vintage-card rounded-lg shadow-2xl p-8 relative overflow-hidden">
+        <!-- Decorative corners -->
+        <div class="absolute top-2 left-2 w-12 h-12 border-t-2 border-l-2 border-amber-400 opacity-50"></div>
+        <div class="absolute top-2 right-2 w-12 h-12 border-t-2 border-r-2 border-amber-400 opacity-50"></div>
+        <div class="absolute bottom-2 left-2 w-12 h-12 border-b-2 border-l-2 border-amber-400 opacity-50"></div>
+        <div class="absolute bottom-2 right-2 w-12 h-12 border-b-2 border-r-2 border-amber-400 opacity-50"></div>
+        
+        {% if valid_token %}
+        <div class="text-center">
+            <div class="inline-block mb-4 p-4 bg-amber-900/20 rounded-full">
+                <svg class="w-12 h-12 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <h2 class="ornate-title text-3xl mb-4">Email Confirmed!</h2>
+            <p class="text-amber-200/70 font-serif mb-8">
+                Your email address has been successfully verified.
+                You can now enjoy all features of Mvs-Movie.
+            </p>
+            <a href="{% url 'accounts:login' %}" class="vintage-btn inline-block py-3 px-8">
+                Go to Login
+            </a>
+        </div>
+        {% else %}
+        <div class="text-center">
+            <div class="inline-block mb-4 p-4 bg-red-900/20 rounded-full">
+                <svg class="w-12 h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </div>
+            <h2 class="ornate-title text-3xl mb-4 text-red-400">Invalid or Expired Link</h2>
+            <p class="text-amber-200/70 font-serif mb-8">
+                This email confirmation link is invalid or has expired.
+                Please try registering again or contact support if you need assistance.
+            </p>
+            <div class="flex justify-center space-x-4">
+                <a href="{% url 'accounts:register' %}" class="vintage-btn inline-block py-3 px-6">
+                    Register Again
+                </a>
+                <a href="{% url 'movies:home' %}" class="category-btn inline-block py-3 px-6 rounded-lg">
+                    Go Home
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

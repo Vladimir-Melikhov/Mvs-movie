@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Comment - Mvs-Movie{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-12">
+    <div class="vintage-card rounded-lg shadow-2xl p-8 border border-amber-900/30 relative overflow-hidden">
+        <!-- Decorative corners -->
+        <div class="absolute top-2 left-2 w-12 h-12 border-t-2 border-l-2 border-amber-400 opacity-30"></div>
+        <div class="absolute top-2 right-2 w-12 h-12 border-t-2 border-r-2 border-amber-400 opacity-30"></div>
+        <div class="absolute bottom-2 left-2 w-12 h-12 border-b-2 border-l-2 border-amber-400 opacity-30"></div>
+        <div class="absolute bottom-2 right-2 w-12 h-12 border-b-2 border-r-2 border-amber-400 opacity-30"></div>
+        
+        <div class="text-center">
+            <div class="inline-block mb-4 p-4 bg-red-900/20 rounded-full">
+                <svg class="w-12 h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+            </div>
+            <h2 class="ornate-title text-3xl mb-4 text-red-400">Delete Comment?</h2>
+            <p class="text-amber-200/70 font-serif mb-2">
+                Are you sure you want to delete your comment on
+            </p>
+            <p class="text-xl font-semibold mb-6 text-amber-400 ornate-title">{{ comment.movie.title }}?</p>
+            <div class="vintage-card rounded-lg p-4 mb-6 text-left border border-amber-900/30">
+                <p class="text-amber-200/80 italic font-serif">"{{ comment.text|truncatewords:30 }}"</p>
+            </div>
+            <p class="text-amber-200/70 font-serif mb-8">
+                This action cannot be undone.
+            </p>
+
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                <div class="flex space-x-4">
+                    <button type="submit" class="flex-1 vintage-btn py-3" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);">
+                        Yes, Delete
+                    </button>
+                    <a href="{% url 'movies:movie_detail' comment.movie.slug %}"
+                       class="flex-1 text-center category-btn py-3 rounded-lg">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

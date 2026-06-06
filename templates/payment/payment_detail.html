@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment Details - Mvs-Movie{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="mb-6">
+        <a href="{% url 'payment:payment_history' %}"
+           class="text-amber-400 hover:text-amber-300 transition font-serif">
+            ← Back to Payment History
+        </a>
+    </div>
+
+    <div class="vintage-card rounded-lg shadow-2xl p-8 border border-amber-900/30">
+        <!-- Header -->
+        <div class="flex items-start justify-between mb-8 pb-6 border-b border-amber-900/30">
+            <div>
+                <h1 class="ornate-title text-3xl mb-2">Payment Details</h1>
+                <p class="text-amber-200/70 font-serif">{{ payment.created_at|date:"F d, Y - H:i" }}</p>
+            </div>
+            <div class="text-right">
+                <p class="text-3xl font-bold text-amber-400 mb-2">${{ payment.amount }}</p>
+                {% if payment.status == 'succeeded' %}
+                <span class="inline-block bg-amber-900/30 text-amber-400 px-4 py-2 rounded font-semibold border border-amber-400/30">
+                    ✓ Payment Succeeded
+                </span>
+                {% elif payment.status == 'pending' %}
+                <span class="inline-block bg-yellow-900/30 text-yellow-400 px-4 py-2 rounded font-semibold border border-yellow-400/30">
+                    ⏳ Payment Pending
+                </span>
+                {% elif payment.status == 'failed' %}
+                <span class="inline-block bg-red-900/30 text-red-400 px-4 py-2 rounded font-semibold border border-red-400/30">
+                    ✗ Payment Failed
+                </span>
+                {% elif payment.status == 'refunded' %}
+                <span class="inline-block bg-purple-900/30 text-purple-400 px-4 py-2 rounded font-semibold border border-purple-400/30">
+                    ↺ Payment Refunded
+                </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Payment Information -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="vintage-card rounded-lg p-6 border border-amber-900/30">
+                <h3 class="text-lg font-semibold mb-4 text-amber-400 ornate-title">Payment Information</h3>
+                <dl class="space-y-3 font-serif">
+                    <div>
+                        <dt class="text-amber-200/60 text-sm">Description</dt>
+                        <dd class="text-amber-200 font-semibold">{{ payment.description|default:"Mvs-Movie Premium Subscription" }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-amber-200/60 text-sm">Amount</dt>
+                        <dd class="text-amber-200 font-semibold">${{ payment.amount }} {{ payment.currency|upper }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-amber-200/60 text-sm">Subscription Duration</dt>
+                        <dd class="text-amber-200 font-semibold">{{ payment.subscription_months }} month{{ payment.subscription_months|pluralize }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-amber-200/60 text-sm">Status</dt>
+                        <dd class="text-amber-200 font-semibold">{{ payment.get_status_display }}</dd>
+                    </div>
+                </dl>
+            </div>
+
+            <div class="vintage-card rounded-lg p-6 border border-amber-900/30">
+                <h3 class="text-lg font-semibold mb-4 text-amber-400 ornate-title">Transaction Details</h3>
+                <dl class="space-y-3 font-serif">
+                    <div>
+                        <dt class="text-amber-200/60 text-sm">Payment Intent ID</dt>
+                        <dd class="text-amber-200 font-mono text-xs break-all">{{ payment.stripe_payment_intent_id }}</dd>
+                    </div>
+                    {% if payment.stripe_checkout_session_id %}
+                    <div>
+                        <dt class="text-amber-200/60 text-sm">Checkout Session ID</dt>
+                        <dd class="text-amber-200 font-mono text-xs break-all">{{ payment.stripe_checkout_session_id }}</dd>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <dt class="text-amber-200/60 text-sm">Created At</dt>
+                        <dd class="text-amber-200">{{ payment.created_at|date:"F d, Y H:i:s" }}</dd>
+                    </div>
+                    {% if payment.completed_at %}
+                    <div>
+                        <dt class="text-amber-200/60 text-sm">Completed At</dt>
+                        <dd class="text-amber-200">{{ payment.completed_at|date:"F d, Y H:i:s" }}</dd>
+                    </div>
+                    {% endif %}
+                </dl>
+            </div>
+        </div>
+
+        <!-- Subscription Status -->
+        {% if payment.is_successful %}
+        <div class="vintage-card rounded-lg p-6 mb-6 border border-amber-400/50">
+            <div class="flex items-start">
+                <svg class="w-6 h-6 text-amber-400 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <div class="flex-1">
+                    <h4 class="font-semibold text-amber-400 mb-1 ornate-title">Subscription Activated</h4>
+                    <p class="text-amber-200/80 text-sm font-serif">
+                        Your Mvs-Movie Premium subscription has been activated successfully.
+                        Enjoy unlimited movie watching!
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Additional Metadata -->
+        {% if payment.metadata %}
+        <div class="vintage-card rounded-lg p-6 border border-amber-900/30">
+            <h3 class="text-lg font-semibold mb-4 text-amber-400 ornate-title">Additional Information</h3>
+            <pre class="vintage-input p-4 rounded text-xs text-amber-200/70 overflow-x-auto font-mono">{{ payment.metadata|pprint }}</pre>
+        </div>
+        {% endif %}
+
+        <!-- Actions -->
+        <div class="mt-8 pt-6 border-t border-amber-900/30 flex flex-wrap gap-4">
+            <a href="{% url 'accounts:profile' user.username %}"
+               class="vintage-btn px-6 py-3">
+                Go to Profile
+            </a>
+            <a href="{% url 'movies:home' %}"
+               class="category-btn px-6 py-3 rounded-lg">
+                Browse Movies
+            </a>
+            <a href="{% url 'payment:payment_history' %}"
+               class="category-btn px-6 py-3 rounded-lg">
+                View All Payments
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

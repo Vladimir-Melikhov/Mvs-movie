@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Expiring Soon - Mvs-Movie</title>
+    <style>
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.6;
+            color: #f5f5dc;
+            background: linear-gradient(135deg, #1a0f0f 0%, #2d1810 50%, #1a0f0f 100%);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: linear-gradient(135deg, rgba(61, 40, 23, 0.95) 0%, rgba(26, 15, 15, 0.98) 100%);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(212, 175, 55, 0.3);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+        }
+        .header {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 3px solid #d4af37;
+        }
+        .header h1 {
+            color: #1a0f0f;
+            margin: 0;
+            font-size: 28px;
+            font-weight: 900;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.3);
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .content h2 {
+            color: #d4af37;
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        .content p {
+            color: rgba(245, 245, 220, 0.9);
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .warning-box {
+            background: rgba(245, 158, 11, 0.15);
+            border-left: 4px solid #f59e0b;
+            padding: 16px;
+            margin: 24px 0;
+            border-radius: 4px;
+        }
+        .warning-box p {
+            margin: 0;
+            color: #fcd34d;
+        }
+        .button {
+            display: inline-block;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #8b0000 0%, #5a0000 100%);
+            border: 2px solid #d4af37;
+            color: #d4af37 !important;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 16px;
+            margin: 20px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .footer {
+            background: rgba(26, 15, 15, 0.95);
+            padding: 30px;
+            text-align: center;
+            color: rgba(245, 245, 220, 0.6);
+            font-size: 14px;
+            border-top: 2px solid rgba(212, 175, 55, 0.3);
+        }
+        .footer a {
+            color: #d4af37;
+            text-decoration: none;
+        }
+        ul {
+            color: rgba(245, 245, 220, 0.9);
+        }
+        strong {
+            color: #d4af37;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⏰ Subscription Expiring Soon</h1>
+        </div>
+
+        <div class="content">
+            <h2>Hi {{ user.username }},</h2>
+
+            <p>Your Mvs-Movie Premium subscription is expiring soon.</p>
+
+            <div class="warning-box">
+                <p><strong>⚠️ {{ days_remaining }} Days Remaining</strong><br>
+                Your subscription will expire on {{ subscription.end_date|date:"F d, Y" }}.</p>
+            </div>
+
+            <p>After your subscription expires, you'll lose access to:</p>
+            <ul>
+                <li>Unlimited movie watching</li>
+                <li>HD quality streaming</li>
+                <li>Ad-free experience</li>
+            </ul>
+
+            <p><strong>Don't let your entertainment stop!</strong> Renew your subscription now to continue enjoying unlimited access to thousands of movies.</p>
+
+            <div style="text-align: center;">
+                <a href="{{ site_url }}/accounts/profile/{{ user.username }}/" class="button">Renew Subscription</a>
+            </div>
+
+            <p style="color: rgba(245, 245, 220, 0.6); font-size: 14px; margin-top: 30px;">
+                If you don't wish to renew, you'll automatically be switched to the free plan with limited viewing time.
+            </p>
+        </div>
+
+        <div class="footer">
+            <p><strong style="color: #d4af37;">Mvs-Movie</strong></p>
+            <p style="margin-top: 20px;">
+                <a href="#">Help Center</a> |
+                <a href="#">Contact Support</a>
+            </p>
+            <p style="margin-top: 20px; font-size: 12px;">
+                &copy; 2025 Mvs-Movie. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

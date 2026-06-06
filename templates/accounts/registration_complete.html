@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Registration Complete - Mvs-Movie{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-12">
+    <div class="vintage-card rounded-lg shadow-2xl p-8 relative overflow-hidden">
+        <!-- Decorative corners -->
+        <div class="absolute top-2 left-2 w-12 h-12 border-t-2 border-l-2 border-amber-400 opacity-50"></div>
+        <div class="absolute top-2 right-2 w-12 h-12 border-t-2 border-r-2 border-amber-400 opacity-50"></div>
+        <div class="absolute bottom-2 left-2 w-12 h-12 border-b-2 border-l-2 border-amber-400 opacity-50"></div>
+        <div class="absolute bottom-2 right-2 w-12 h-12 border-b-2 border-r-2 border-amber-400 opacity-50"></div>
+        
+        <div class="text-center">
+            <div class="inline-block mb-4 p-4 bg-amber-900/20 rounded-full">
+                <svg class="w-12 h-12 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+            </div>
+            <h2 class="ornate-title text-3xl mb-4">Check Your Email</h2>
+            <p class="text-amber-200/70 font-serif mb-6">
+                Thank you for registering! We've sent a confirmation email to
+                <strong class="text-amber-400">{{ email }}</strong>
+            </p>
+            <p class="text-amber-200/70 font-serif mb-8">
+                Please check your inbox and click the confirmation link to activate your account.
+            </p>
+            <div class="vintage-card rounded-lg p-4 mb-8 border border-amber-900/30">
+                <p class="text-sm text-amber-200/70 font-serif">
+                    <strong class="text-amber-400">Note:</strong> If you don't see the email, please check your spam folder.
+                    The confirmation link will expire in 24 hours.
+                </p>
+            </div>
+            <a href="{% url 'movies:home' %}" class="vintage-btn inline-block py-3 px-8">
+                Go to Homepage
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

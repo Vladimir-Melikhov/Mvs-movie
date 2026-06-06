@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Privacy Policy - Mvs-Movie{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-12 px-4">
+    <div class="vintage-card rounded-lg p-8 md:p-12 relative overflow-hidden border border-amber-900/30">
+        <h1 class="ornate-title text-4xl mb-8 text-center">Privacy Policy</h1>
+        
+        <div class="space-y-6 text-amber-100/80 font-serif leading-relaxed text-lg">
+            <section>
+                <h2 class="text-2xl text-amber-400 mb-3 ornate-title">1. Introduction</h2>
+                <p>Welcome to Mvs-Movie. Please note that this is a <strong>demonstration project</strong> (portfolio). All movies, user interactions, and payments are simulated or running in test mode.</p>
+            </section>
+
+            <section>
+                <h2 class="text-2xl text-amber-400 mb-3 ornate-title">2. Data Collection</h2>
+                <p>We collect minimal data required to demonstrate the application's functionality:</p>
+                <ul class="list-disc pl-6 space-y-2 mt-2">
+                    <li>Email address (for authentication)</li>
+                    <li>Username (for profile display)</li>
+                    <li>Payment information (Processed securely by Stripe in Test Mode)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="text-2xl text-amber-400 mb-3 ornate-title">3. Cookies</h2>
+                <p>We use essential cookies to keep you logged in and ensure the site functions correctly. By using our site, you agree to our use of these cookies.</p>
+            </section>
+
+            <div class="pt-8 text-center">
+                <a href="{% url 'movies:home' %}" class="vintage-btn inline-block py-3 px-8">
+                    Back to Cinema
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

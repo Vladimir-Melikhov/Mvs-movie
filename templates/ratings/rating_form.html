@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if is_update %}Edit{% else %}Add{% endif %} Rating - {{ movie.title }} - Mvs-Movie{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="vintage-card rounded-lg shadow-2xl p-8 border border-amber-900/30 relative overflow-hidden">
+        <!-- Decorative corners -->
+        <div class="absolute top-2 left-2 w-12 h-12 border-t-2 border-l-2 border-amber-400 opacity-30"></div>
+        <div class="absolute top-2 right-2 w-12 h-12 border-t-2 border-r-2 border-amber-400 opacity-30"></div>
+        <div class="absolute bottom-2 left-2 w-12 h-12 border-b-2 border-l-2 border-amber-400 opacity-30"></div>
+        <div class="absolute bottom-2 right-2 w-12 h-12 border-b-2 border-r-2 border-amber-400 opacity-30"></div>
+        
+        <h2 class="ornate-title text-3xl text-center mb-6">
+            {% if is_update %}Edit Your Rating{% else %}Rate This Movie{% endif %}
+        </h2>
+
+        <!-- Movie Info -->
+        <div class="flex items-center space-x-4 mb-8 pb-6 border-b border-amber-900/30">
+            {% if movie.poster %}
+            <img src="{{ movie.poster.url }}"
+                 alt="{{ movie.title }}"
+                 class="w-20 h-28 object-cover rounded border-2 border-amber-400/30">
+            {% endif %}
+            <div>
+                <h3 class="text-xl font-semibold text-amber-400 ornate-title">{{ movie.title }}</h3>
+                <p class="text-amber-200/60 font-serif">{{ movie.year }} • {{ movie.category.name }}</p>
+            </div>
+        </div>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="bg-red-900/30 border border-red-400/50 text-red-200 px-4 py-3 rounded">
+                {% for error in form.non_field_errors %}
+                <p class="font-serif">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div>
+                <label for="{{ form.score.id_for_label }}" class="block text-lg font-semibold mb-3 text-amber-400">
+                    Your Rating (1-10)
+                </label>
+                <!-- Star Rating Visual -->
+                <div class="flex items-center space-x-2 mb-4" x-data="{ rating: {{ form.score.value|default:0 }} }">
+                    {% for i in "0123456789" %}
+                    <button type="button"
+                            @click="rating = {{ forloop.counter }}; document.getElementById('{{ form.score.id_for_label }}').value = {{ forloop.counter }}"
+                            class="focus:outline-none">
+                        <svg class="w-10 h-10 transition cursor-pointer star"
+                             :class="rating >= {{ forloop.counter }} ? 'filled' : ''"
+                             fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                        </svg>
+                    </button>
+                    {% endfor %}
+                </div>
+
+                <input type="number"
+                       name="{{ form.score.name }}"
+                       id="{{ form.score.id_for_label }}"
+                       value="{{ form.score.value|default:'' }}"
+                       min="1"
+                       max="10"
+                       class="vintage-input rounded-lg px-4 py-3 w-full"
+                       placeholder="Enter a number from 1 to 10"
+                       required>
+
+                {% if form.score.errors %}
+                <p class="mt-1 text-sm text-red-400">{{ form.score.errors.0 }}</p>
+                {% endif %}
+
+                {% if form.score.help_text %}
+                <p class="mt-1 text-xs text-amber-200/50 italic font-serif">{{ form.score.help_text }}</p>
+                {% endif %}
+            </div>
+
+            <div class="flex space-x-4">
+                <button type="submit" class="flex-1 vintage-btn py-3">
+                    {% if is_update %}Update Rating{% else %}Submit Rating{% endif %}
+                </button>
+                <a href="{% url 'movies:movie_detail' movie.slug %}"
+                   class="flex-1 text-center category-btn py-3 rounded-lg">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

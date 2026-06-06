@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Mvs-Movie{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-12">
+    <div class="vintage-card rounded-lg shadow-2xl p-8 relative overflow-hidden">
+        <!-- Decorative corners -->
+        <div class="absolute top-2 left-2 w-12 h-12 border-t-2 border-l-2 border-amber-400 opacity-50"></div>
+        <div class="absolute top-2 right-2 w-12 h-12 border-t-2 border-r-2 border-amber-400 opacity-50"></div>
+        <div class="absolute bottom-2 left-2 w-12 h-12 border-b-2 border-l-2 border-amber-400 opacity-50"></div>
+        <div class="absolute bottom-2 right-2 w-12 h-12 border-b-2 border-r-2 border-amber-400 opacity-50"></div>
+        
+        <div class="text-center mb-8">
+            <div class="inline-block mb-4 p-4 bg-amber-900/20 rounded-full">
+                <svg class="w-12 h-12 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+                </svg>
+            </div>
+            <h2 class="ornate-title text-3xl mb-2">Member Access</h2>
+            <p class="text-amber-200/70 font-serif italic">Enter the cinema lounge</p>
+        </div>
+
+        <form method="post" action="{% url 'accounts:login' %}" class="space-y-6">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="bg-red-900/30 border border-red-400/50 text-red-200 px-4 py-3 rounded">
+                {% for error in form.non_field_errors %}
+                <p class="font-serif">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div>
+                <label for="{{ form.username.id_for_label }}" class="block text-sm font-semibold mb-2 text-amber-400">
+                    Username or Email
+                </label>
+                <input type="text"
+                       name="{{ form.username.name }}"
+                       id="{{ form.username.id_for_label }}"
+                       value="{{ form.username.value|default:'' }}"
+                       class="vintage-input rounded-lg px-4 py-3 w-full"
+                       placeholder="Enter your credentials"
+                       required>
+                {% if form.username.errors %}
+                <p class="mt-1 text-sm text-red-400">{{ form.username.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="{{ form.password.id_for_label }}" class="block text-sm font-semibold mb-2 text-amber-400">
+                    Password
+                </label>
+                <input type="password"
+                       name="{{ form.password.name }}"
+                       id="{{ form.password.id_for_label }}"
+                       class="vintage-input rounded-lg px-4 py-3 w-full"
+                       placeholder="Enter your password"
+                       required>
+                {% if form.password.errors %}
+                <p class="mt-1 text-sm text-red-400">{{ form.password.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <input type="checkbox"
+                           name="remember_me"
+                           id="remember_me"
+                           class="w-4 h-4 text-amber-500 bg-amber-950 border-amber-700 rounded focus:ring-amber-500">
+                    <label for="remember_me" class="ml-2 text-sm text-amber-200/70 font-serif">
+                        Remember me
+                    </label>
+                </div>
+                <a href="{% url 'accounts:password_reset' %}" class="text-sm text-amber-400 hover:text-amber-300 transition font-serif italic">
+                    Forgot password?
+                </a>
+            </div>
+
+            <button type="submit" class="w-full vintage-btn py-3">
+                Enter Cinema
+            </button>
+        </form>
+
+        <div class="mt-6 text-center border-t border-amber-900/30 pt-6">
+            <p class="text-amber-200/70 font-serif">
+                Not a member yet?
+                <a href="{% url 'accounts:register' %}" class="text-amber-400 hover:text-amber-300 transition font-bold ml-1">
+                    Join the club
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

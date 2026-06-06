@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Continue Watching - Mvs-Movie{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <h1 class="ornate-title text-4xl mb-8">Continue Watching</h1>
+
+    {% if history %}
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+        {% for item in history %}
+        <div class="group">
+            <a href="{% url 'player:watch' item.movie.slug %}" class="movie-card cursor-pointer block">
+                <div class="relative rounded-lg overflow-hidden">
+                    {% if item.movie.poster %}
+                    <img src="{{ item.movie.poster.url }}"
+                         alt="{{ item.movie.title }}"
+                         class="w-full h-72 object-cover">
+                    {% else %}
+                    <img src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=400"
+                         alt="{{ item.movie.title }}"
+                         class="w-full h-72 object-cover">
+                    {% endif %}
+
+                    <!-- Progress Bar -->
+                    <div class="absolute bottom-0 left-0 right-0 h-1 bg-amber-900/50">
+                        <div class="h-full bg-gradient-to-r from-amber-400 to-amber-600 shadow-lg"
+                             style="width: {{ item.get_progress_percentage }}%"></div>
+                    </div>
+
+                    <!-- Play Overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                        <div class="text-center px-4">
+                            <div class="bg-gradient-to-br from-amber-600 to-red-900 p-3 rounded-full mb-3 inline-block group-hover:scale-110 transition border-2 border-amber-400 shadow-xl">
+                                <svg class="w-6 h-6 text-amber-100" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
+                                </svg>
+                            </div>
+                            <p class="text-sm text-amber-200 font-serif">{{ item.get_progress_percentage }}% watched</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <h3 class="font-semibold truncate group-hover:text-amber-400 transition ornate-title text-base">{{ item.movie.title }}</h3>
+                    <p class="text-sm text-amber-200/60 font-serif">{{ item.movie.year }}</p>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-12 vintage-card rounded-lg border border-amber-900/30 shadow-xl">
+        <svg class="w-20 h-20 text-amber-400/50 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+        </svg>
+        <h2 class="ornate-title text-2xl mb-2">No Movies in Progress</h2>
+        <p class="text-amber-200/70 font-serif mb-6">
+            Start watching a movie to see it here
+        </p>
+        <a href="{% url 'movies:home' %}" class="vintage-btn inline-block py-3 px-6">
+            Browse Movies
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

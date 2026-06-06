@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Watch History - Mvs-Movie{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <h1 class="ornate-title text-4xl mb-8">Watch History</h1>
+
+    {% if history %}
+    <div class="space-y-4">
+        {% for item in history %}
+        <div class="vintage-card rounded-lg border border-amber-900/30 hover:border-amber-400/50 transition overflow-hidden shadow-xl">
+            <div class="flex">
+                <!-- Movie Poster -->
+                <div class="w-48 flex-shrink-0 relative">
+                    <a href="{% url 'player:watch' item.movie.slug %}">
+                        {% if item.movie.poster %}
+                        <img src="{{ item.movie.poster.url }}"
+                             alt="{{ item.movie.title }}"
+                             class="w-full h-full object-cover">
+                        {% else %}
+                        <img src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=300"
+                             alt="{{ item.movie.title }}"
+                             class="w-full h-full object-cover">
+                        {% endif %}
+
+                        <!-- Progress Overlay -->
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-amber-900/50">
+                            <div class="h-full bg-gradient-to-r from-amber-400 to-amber-600 shadow-lg"
+                                 style="width: {{ item.get_progress_percentage }}%"></div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Movie Info -->
+                <div class="flex-1 p-6">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex-1">
+                            <a href="{% url 'player:watch' item.movie.slug %}"
+                               class="text-2xl font-semibold hover:text-amber-400 transition ornate-title">
+                                {{ item.movie.title }}
+                            </a>
+                            <p class="text-amber-200/60 text-sm mt-1 font-serif">
+                                {{ item.movie.year }} • {{ item.movie.category.name }} • {{ item.movie.get_duration_display }}
+                            </p>
+                        </div>
+                        {% if item.completed %}
+                        <span class="bg-amber-900/30 text-amber-400 px-3 py-1 rounded text-sm font-semibold border border-amber-400/30">
+                            ✓ Completed
+                        </span>
+                        {% else %}
+                        <span class="bg-red-900/30 text-red-400 px-3 py-1 rounded text-sm font-semibold border border-red-400/30">
+                            {{ item.get_progress_percentage }}% watched
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    {% if item.movie.description %}
+                    <p class="text-amber-200/70 text-sm line-clamp-2 mb-4 font-serif">
+                        {{ item.movie.description|truncatewords:30 }}
+                    </p>
+                    {% endif %}
+
+                    <div class="flex items-center space-x-4">
+                        <a href="{% url 'player:watch' item.movie.slug %}"
+                           class="inline-flex items-center text-amber-400 hover:text-amber-300 text-sm font-semibold transition font-serif">
+                            <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
+                            </svg>
+                            {% if item.completed %}Watch Again{% else %}Continue Watching{% endif %}
+                        </a>
+                        <a href="{% url 'movies:movie_detail' item.movie.slug %}"
+                           class="text-amber-200/70 hover:text-amber-200 text-sm font-semibold transition font-serif">
+                            Movie Details
+                        </a>
+                        <span class="text-amber-200/50 text-sm ml-auto font-serif italic">
+                            Last watched: {{ item.last_watched|timesince }} ago
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="flex justify-center mt-12 space-x-2">
+        {% if page_obj.has_previous %}
+        <a href="?page=1"
+           class="px-4 py-2 category-btn rounded-lg transition">
+            First
+        </a>
+        <a href="?page={{ page_obj.previous_page_number }}"
+           class="px-4 py-2 category-btn rounded-lg transition">
+            Previous
+        </a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <span class="px-4 py-2 vintage-btn rounded-lg font-semibold">{{ num }}</span>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <a href="?page={{ num }}"
+           class="px-4 py-2 category-btn rounded-lg transition">
+            {{ num }}
+        </a>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}"
+           class="px-4 py-2 category-btn rounded-lg transition">
+            Next
+        </a>
+        <a href="?page={{ page_obj.paginator.num_pages }}"
+           class="px-4 py-2 category-btn rounded-lg transition">
+            Last
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="text-center py-12 vintage-card rounded-lg border border-amber-900/30 shadow-xl">
+        <svg class="w-20 h-20 text-amber-400/50 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <h2 class="ornate-title text-2xl mb-2">No Watch History</h2>
+        <p class="text-amber-200/70 font-serif mb-6">
+            You haven't watched any movies yet
+        </p>
+        <a href="{% url 'movies:home' %}" class="vintage-btn inline-block py-3 px-6">
+            Browse Movies
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

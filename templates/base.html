@@ -1,0 +1,378 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mvs-Movie - Classic Cinema Experience{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+    <style>
+        :root {
+            --vintage-gold: #d4af37;
+            --vintage-red: #8b0000;
+            --vintage-cream: #f5f5dc;
+            --vintage-dark: #1a0f0f;
+            --vintage-brown: #3d2817;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a0f0f 0%, #2d1810 50%, #1a0f0f 100%);
+            background-attachment: fixed;
+            font-family: 'Crimson Text', serif;
+            color: var(--vintage-cream);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(0, 0, 0, 0.15),
+                    rgba(0, 0, 0, 0.15) 1px,
+                    transparent 1px,
+                    transparent 2px
+                );
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.3;
+        }
+
+        .ornate-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            text-shadow: 
+                2px 2px 0px var(--vintage-red),
+                4px 4px 10px rgba(0, 0, 0, 0.8);
+            letter-spacing: 0.05em;
+            color: var(--vintage-gold);
+        }
+
+        .movie-card {
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            background: rgba(26, 15, 15, 0.8);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .movie-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(212, 175, 55, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .movie-card:hover::before {
+            opacity: 1;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 
+                0 20px 40px rgba(212, 175, 55, 0.3),
+                0 0 30px rgba(139, 0, 0, 0.4);
+            border-color: var(--vintage-gold);
+        }
+
+        .vintage-btn {
+            background: linear-gradient(135deg, var(--vintage-red) 0%, #5a0000 100%);
+            border: 2px solid var(--vintage-gold);
+            color: var(--vintage-gold);
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.75rem 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 15px rgba(139, 0, 0, 0.4);
+        }
+
+        .vintage-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(212, 175, 55, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .vintage-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .vintage-btn:hover {
+            border-color: var(--vintage-cream);
+            color: var(--vintage-cream);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .category-btn {
+            background: rgba(61, 40, 23, 0.6);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: var(--vintage-gold);
+            font-family: 'Crimson Text', serif;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+            background: linear-gradient(135deg, var(--vintage-red), #5a0000);
+            border-color: var(--vintage-gold);
+            color: var(--vintage-cream);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .vintage-card {
+            background: linear-gradient(135deg, rgba(61, 40, 23, 0.8) 0%, rgba(26, 15, 15, 0.9) 100%);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .vintage-input {
+            background: rgba(26, 15, 15, 0.8);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: var(--vintage-cream);
+            font-family: 'Crimson Text', serif;
+            transition: all 0.3s ease;
+        }
+
+        .vintage-input:focus {
+            outline: none;
+            border-color: var(--vintage-gold);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .vintage-input::placeholder {
+            color: rgba(245, 245, 220, 0.4);
+            font-style: italic;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .ornate-title {
+                font-size: 1.5rem !important;
+            }
+            
+            .vintage-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+
+            .movie-card:hover {
+                transform: translateY(-5px) scale(1.02);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--vintage-dark);
+            border-left: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--vintage-gold), var(--vintage-red));
+            border-radius: 6px;
+            border: 2px solid var(--vintage-dark);
+        }
+
+        .star {
+            color: rgba(212, 175, 55, 0.3);
+            transition: all 0.2s;
+            filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.5));
+        }
+
+        .star.filled {
+            color: var(--vintage-gold);
+            filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.8));
+        }
+    </style>
+</head>
+<body>
+
+    <header class="vintage-card fixed w-full top-0 z-50 shadow-2xl">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <a href="{% url 'movies:home' %}" class="ornate-title text-3xl md:text-4xl">Mvs-Movie</a>
+                
+                <nav class="hidden lg:flex space-x-6">
+                    <a href="{% url 'movies:home' %}" class="hover:text-amber-400 transition font-semibold">Movies</a>
+                    <a href="{% url 'movies:search' %}" class="hover:text-amber-400 transition font-semibold">Search</a>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'player:continue_watching' %}" class="hover:text-amber-400 transition font-semibold">Continue</a>
+                    <a href="{% url 'ratings:my_ratings' %}" class="hover:text-amber-400 transition font-semibold">My Ratings</a>
+                    {% endif %}
+                </nav>
+
+                <div class="flex items-center space-x-4">
+                    <form method="get" action="{% url 'movies:search' %}" class="hidden md:block">
+                        <input type="text"
+                              name="q"
+                              placeholder="Search..."
+                              value="{{ request.GET.q }}"
+                              class="vintage-input rounded px-4 py-2 w-48 lg:w-64">
+                    </form>
+
+                    {% if user.is_authenticated %}
+                    <div x-data="{ open: false }" class="relative">
+                        <button @click="open = !open" class="flex items-center space-x-2 vintage-btn py-2 px-3">
+                            {% if user.avatar %}
+                            <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="w-8 h-8 rounded-full object-cover border-2 border-amber-400">
+                            {% else %}
+                            <div class="w-8 h-8 bg-gradient-to-br from-amber-700 to-red-900 rounded-full flex items-center justify-center text-sm font-bold border-2 border-amber-400">
+                                {{ user.username|first|upper }}
+                            </div>
+                            {% endif %}
+                            <span class="hidden md:inline">{{ user.username }}</span>
+                        </button>
+                        <div x-show="open"
+                             @click.away="open = false"
+                             x-transition
+                             class="absolute right-0 mt-2 w-48 vintage-card rounded-lg shadow-2xl py-2 z-50">
+                            <a href="{% url 'accounts:profile' user.username %}" class="block px-4 py-2 hover:bg-amber-900/30 transition">Profile</a>
+                            <a href="{% url 'accounts:settings' %}" class="block px-4 py-2 hover:bg-amber-900/30 transition">Settings</a>
+                            <a href="{% url 'player:continue_watching' %}" class="block px-4 py-2 hover:bg-amber-900/30 transition lg:hidden">Continue</a>
+                            <a href="{% url 'player:history' %}" class="block px-4 py-2 hover:bg-amber-900/30 transition">History</a>
+                            <a href="{% url 'ratings:my_ratings' %}" class="block px-4 py-2 hover:bg-amber-900/30 transition lg:hidden">My Ratings</a>
+                            <hr class="my-2 border-amber-900/30">
+                            <form method="post" action="{% url 'accounts:logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="block w-full text-left px-4 py-2 hover:bg-amber-900/30 transition text-red-400">
+                                    Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'accounts:login' %}" class="vintage-btn hidden md:inline-block">
+                        Login
+                    </a>
+                    <a href="{% url 'accounts:register' %}" class="vintage-btn">
+                        Sign Up
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <form method="get" action="{% url 'movies:search' %}" class="mt-4 md:hidden">
+                <input type="text"
+                      name="q"
+                      placeholder="Search movies..."
+                      value="{{ request.GET.q }}"
+                      class="vintage-input rounded px-4 py-2 w-full">
+            </form>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 pt-40 md:pt-36 lg:pt-32 pb-12 relative z-10">
+        {% if messages %}
+        <div class="mb-6">
+            {% for message in messages %}
+            <div class="vintage-card rounded-lg px-6 py-4 mb-3 border-l-4 {% if message.tags == 'error' %}border-red-600{% elif message.tags == 'success' %}border-amber-400{% elif message.tags == 'warning' %}border-yellow-500{% else %}border-blue-500{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="vintage-card mt-16 py-12 border-t-2 relative z-10">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="ornate-title text-2xl mb-4">Mvs-movie</h3>
+                    <p class="text-amber-200/70">Experience cinema like the golden age. Your favorite entertainment platform.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-amber-400">Navigation</h4>
+                    <ul class="space-y-2 text-amber-200/70">
+                        <li><a href="{% url 'movies:home' %}" class="hover:text-amber-400 transition">Movies</a></li>
+                        <li><a href="{% url 'movies:search' %}" class="hover:text-amber-400 transition">Search</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-amber-400">Support</h4>
+                    <ul class="space-y-2 text-amber-200/70">
+                        <li><a href="#" class="hover:text-amber-400 transition">Help Center</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition">FAQ</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-amber-400">Legal</h4>
+                    <ul class="space-y-2 text-amber-200/70">
+                        <li><a href="#" class="hover:text-amber-400 transition">Terms of Service</a></li>
+                        <li><a href="{% url 'privacy_policy' %}" class="hover:text-amber-400 transition">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-amber-900/30 text-center">
+                <p class="text-amber-200/50">&copy; 2025 Mvs-movie. All rights reserved.</p>
+                <p class="text-amber-400/60 text-xs mt-2 font-serif uppercase tracking-widest border border-amber-900/30 inline-block px-3 py-1 rounded">
+                    Demo Project • No Real Services • Educational Purpose Only
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <div x-data="{ show: !localStorage.getItem('cookie_consent') }"
+         x-show="show"
+         x-transition:enter="transition ease-out duration-500"
+         x-transition:enter-start="translate-y-full opacity-0"
+         x-transition:enter-end="translate-y-0 opacity-100"
+         class="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6"
+         style="display: none;"> <div class="vintage-card rounded-lg shadow-2xl p-6 border-t-4 border-amber-400 max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 bg-[#1a0f0f] relative">
+            <div class="flex-1">
+                <h4 class="ornate-title text-xl text-amber-400 mb-2">Cookie Notice</h4>
+                <p class="text-amber-100/80 font-serif text-sm">
+                    We use cookies to ensure you get the best cinema experience. This is a demo project.
+                    By continuing, you agree to our <a href="{% url 'privacy_policy' %}" class="text-amber-400 hover:underline">Privacy Policy</a>.
+                </p>
+            </div>
+            <div class="flex-shrink-0">
+                <button @click="localStorage.setItem('cookie_consent', 'true'); show = false"
+                        class="vintage-btn py-2 px-8 text-sm">
+                    Accept & Enter
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
